@@ -47,6 +47,9 @@ export default defineConfig({
           },
         ],
       },
+      devOptions: {
+        enabled: true,
+      },
       workbox: {
         navigateFallbackDenylist: [/^\/openrouter/],
         runtimeCaching: [
