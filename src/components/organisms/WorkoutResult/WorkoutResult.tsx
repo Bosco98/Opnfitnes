@@ -157,13 +157,21 @@ export function WorkoutResult({
           </div>
         ) : (
           <>
-            <div className={onSaveAndStart ? "result__actions-row" : undefined}>
+            <Button
+              variant="accent"
+              size="md"
+              iconLeft="Play"
+              fullWidth
+              onClick={onStart}
+            >
+              {onSaveAndStart ? "Start" : "Start workout"}
+            </Button>
+            <div className="result__actions-row">
               {onSaveAndStart && (
                 <Button
-                  variant="accent"
-                  size="md"
+                  variant="secondary"
+                  size="sm"
                   iconLeft="BookmarkCheck"
-                  fullWidth
                   onClick={() => {
                     setSaveName(workout.name);
                     setShowSavePanel(true);
@@ -173,34 +181,23 @@ export function WorkoutResult({
                 </Button>
               )}
               <Button
-                variant={onSaveAndStart ? "secondary" : "accent"}
-                size="md"
-                iconLeft="Play"
-                fullWidth
-                onClick={onStart}
+                variant="secondary"
+                size="sm"
+                iconLeft={totalSelected > 0 || note.trim() ? "Wand2" : "RotateCcw"}
+                onClick={handleRegenerate}
               >
-                {onSaveAndStart ? "Start" : "Start workout"}
+                {totalSelected > 0
+                  ? `Swap ${totalSelected}`
+                  : note.trim()
+                    ? "With note"
+                    : "Regenerate"}
+              </Button>
+              <Button variant="ghost" size="sm" iconLeft="SkipForward" onClick={onSkip}>
+                Not now
               </Button>
             </div>
           </>
         )}
-        <div className="result__actions-row">
-          <Button
-            variant="secondary"
-            size="sm"
-            iconLeft={totalSelected > 0 || note.trim() ? "Wand2" : "RotateCcw"}
-            onClick={handleRegenerate}
-          >
-            {totalSelected > 0
-              ? `Swap ${totalSelected} item${totalSelected === 1 ? "" : "s"}`
-              : note.trim()
-                ? "Regenerate with note"
-                : "Regenerate"}
-          </Button>
-          <Button variant="ghost" size="sm" iconLeft="SkipForward" onClick={onSkip}>
-            Not now
-          </Button>
-        </div>
       </div>
     </div>
   );
