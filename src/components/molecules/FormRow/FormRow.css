@@ -1,0 +1,36 @@
+.form-row {
+  display: flex;
+  gap: var(--s-3);
+}
+
+.form-row--stack {
+  flex-direction: column;
+}
+
+.form-row--inline {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-row--inline .form-row__control {
+  flex-shrink: 0;
+}
+
+.form-row__label {
+  display: block;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.form-row__desc {
+  margin-top: 2px;
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  max-width: 42ch;
+}
+
+.form-row--stack .form-row__control {
+  margin-top: var(--s-1);
+}

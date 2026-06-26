@@ -1,0 +1,161 @@
+/* Single icon surface for the whole app. Explicit registry → tree-shakeable and
+   type-safe. Add a name to constants? Register it here once. */
+
+import {
+  Activity,
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  BarChart3,
+  Bell,
+  BellRing,
+  BookmarkCheck,
+  Check,
+  CheckCheck,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Copy,
+  Dumbbell,
+  ExternalLink,
+  Flag,
+  Flame,
+  Footprints,
+  GitCommitHorizontal,
+  Heart,
+  HeartPulse,
+  Hexagon,
+  Hourglass,
+  Info,
+  KeyRound,
+  ListChecks,
+  Loader2,
+  Minus,
+  Monitor,
+  MoveVertical,
+  PersonStanding,
+  Play,
+  Pause,
+  Plus,
+  RectangleHorizontal,
+  Repeat,
+  Repeat2,
+  RotateCcw,
+  Settings,
+  Shirt,
+  SkipForward,
+  Sparkles,
+  Spline,
+  Sprout,
+  Sun,
+  Moon,
+  Timer,
+  Trash2,
+  TrendingUp,
+  Triangle,
+  Trophy,
+  Wand2,
+  X,
+  Zap,
+  Users,
+  LogOut,
+  MoreVertical,
+  UserPlus,
+  Volume2,
+  VolumeX,
+  type LucideIcon,
+} from "lucide-react";
+
+const registry = {
+  Activity,
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  BarChart3,
+  Bell,
+  BellRing,
+  BookmarkCheck,
+  Check,
+  CheckCheck,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Copy,
+  Dumbbell,
+  ExternalLink,
+  Flag,
+  Flame,
+  Footprints,
+  GitCommitHorizontal,
+  Heart,
+  HeartPulse,
+  Hexagon,
+  Hourglass,
+  Info,
+  KeyRound,
+  ListChecks,
+  Loader2,
+  Minus,
+  Monitor,
+  MoveVertical,
+  PersonStanding,
+  Play,
+  Pause,
+  Plus,
+  RectangleHorizontal,
+  Repeat,
+  Repeat2,
+  RotateCcw,
+  Settings,
+  Shirt,
+  SkipForward,
+  Sparkles,
+  Spline,
+  Sprout,
+  Sun,
+  Moon,
+  Timer,
+  Trash2,
+  TrendingUp,
+  Triangle,
+  Trophy,
+  Wand2,
+  X,
+  Zap,
+  Users,
+  LogOut,
+  MoreVertical,
+  UserPlus,
+  Volume2,
+  VolumeX,
+} satisfies Record<string, LucideIcon>;
+
+export type IconName = keyof typeof registry;
+
+export interface IconProps {
+  name: IconName | string;
+  size?: number;
+  strokeWidth?: number;
+  className?: string;
+  "aria-hidden"?: boolean;
+}
+
+export function Icon({
+  name,
+  size = 20,
+  strokeWidth = 2,
+  className,
+  "aria-hidden": ariaHidden = true,
+}: IconProps) {
+  const Cmp = registry[name as IconName] ?? Dumbbell;
+  return (
+    <Cmp
+      size={size}
+      strokeWidth={strokeWidth}
+      className={className}
+      aria-hidden={ariaHidden}
+    />
+  );
+}

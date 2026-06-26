@@ -1,0 +1,57 @@
+.field {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 48px;
+  padding-inline: var(--s-3);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.field:focus-within {
+  border-color: var(--accent);
+}
+
+.field--invalid {
+  border-color: var(--danger);
+}
+
+.field__icon {
+  display: grid;
+  place-items: center;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+}
+
+.field__input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  background: none;
+  outline: none;
+  color: var(--ink);
+  font-size: var(--text-md);
+}
+
+.field__input::placeholder {
+  color: var(--ink-faint);
+}
+
+.field__input:focus-visible {
+  box-shadow: none;
+}
+
+.field__trailing {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--ink-muted);
+}
+
+/* time input gets native picker; normalize appearance */
+.field__input[type="time"] {
+  font-family: var(--font-num);
+}

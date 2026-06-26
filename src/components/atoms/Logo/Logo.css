@@ -1,0 +1,21 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.logo__mark {
+  flex-shrink: 0;
+}
+
+.logo__word {
+  font-family: var(--font-num);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.logo__word-accent {
+  color: var(--accent);
+}

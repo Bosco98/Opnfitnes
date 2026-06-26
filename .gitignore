@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# Vite cache
+.vite/
+*.local
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.swp
+*.sw?
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverrideIcon
+
+# Thumbnails
+._*

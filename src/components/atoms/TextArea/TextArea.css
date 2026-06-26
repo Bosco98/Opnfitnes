@@ -1,0 +1,12 @@
+.field--area {
+  height: auto;
+  align-items: flex-start;
+  padding-block: var(--s-3);
+}
+
+.field__textarea {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+  font-family: inherit;
+}

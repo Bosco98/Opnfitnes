@@ -1,0 +1,49 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.toggle__track {
+  position: relative;
+  width: 46px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  transition: background var(--dur-mid) var(--ease-out);
+}
+
+.toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-pill);
+  background: var(--ink-muted);
+  box-shadow: var(--shadow-1);
+  transition:
+    transform var(--dur-mid) var(--ease-out),
+    background var(--dur-mid) var(--ease-out);
+}
+
+.toggle--on .toggle__track {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.toggle--on .toggle__thumb {
+  transform: translateX(18px);
+  background: var(--accent-ink);
+}
+
+.toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toggle__label {
+  font-size: var(--text-base);
+  color: var(--ink);
+}

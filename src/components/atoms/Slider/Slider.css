@@ -1,0 +1,75 @@
+.slider {
+  --thumb: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  width: 100%;
+}
+
+.slider__track-wrap {
+  position: relative;
+  height: var(--thumb);
+  display: flex;
+  align-items: center;
+  padding-inline: calc(var(--thumb) / 2);
+}
+
+.slider__track {
+  position: absolute;
+  left: calc(var(--thumb) / 2);
+  right: calc(var(--thumb) / 2);
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--surface-hover);
+  overflow: hidden;
+}
+
+.slider__fill {
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  transition: width var(--dur-mid) var(--ease-out);
+}
+
+.slider__input {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: var(--thumb);
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.slider__thumb {
+  position: absolute;
+  top: 50%;
+  width: var(--thumb);
+  height: var(--thumb);
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  border: 3px solid var(--bg);
+  box-shadow: var(--shadow-2);
+  transform: translate(-50%, -50%);
+  transition: left var(--dur-mid) var(--ease-out);
+  pointer-events: none;
+}
+
+.slider__ticks {
+  display: flex;
+  justify-content: space-between;
+}
+
+.slider__tick {
+  font-family: var(--font-num);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink-faint);
+  padding: var(--s-1) var(--s-2);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.slider__tick--active {
+  color: var(--accent);
+}

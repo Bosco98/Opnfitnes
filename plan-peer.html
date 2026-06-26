@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FitnessPal · Buddy P2P — Feature Plan</title>
+<style>
+  :root {
+    --brand:   oklch(0.55 0.22 260);
+    --cyan:    oklch(0.72 0.18 205);
+    --ink:     oklch(0.16 0.02 260);
+    --ink-2:   oklch(0.38 0.04 260);
+    --ink-3:   oklch(0.58 0.03 260);
+    --surface: oklch(0.99 0.005 260);
+    --tinted:  oklch(0.97 0.012 260);
+    --border:  oklch(0.90 0.015 260);
+    --accent:  oklch(0.94 0.06 260);
+    --green:   oklch(0.58 0.18 155);
+    --amber:   oklch(0.72 0.18 75);
+    --red:     oklch(0.60 0.20 25);
+    --radius:  12px;
+    --shadow:  0 1px 3px oklch(0.16 0.02 260 / 0.08), 0 4px 12px oklch(0.16 0.02 260 / 0.06);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--surface);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+
+  /* ── Header ── */
+  .doc-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .doc-logo {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: var(--brand);
+    display: grid; place-items: center; flex-shrink: 0;
+    color: #fff; font-size: 22px;
+  }
+  .doc-header h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+  .doc-header p  { color: var(--ink-2); margin-top: 4px; }
+  .doc-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+    padding: 3px 10px; border-radius: 20px;
+    background: var(--accent); color: var(--brand);
+  }
+  .chip.green { background: oklch(0.92 0.08 155); color: var(--green); }
+  .chip.amber { background: oklch(0.96 0.06 75); color: oklch(0.52 0.18 75); }
+  .chip.purple { background: oklch(0.94 0.06 300); color: oklch(0.42 0.18 300); }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--tinted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 56px;
+  }
+  .toc h2 { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 5px 0; }
+  .toc a { color: var(--brand); text-decoration: none; font-weight: 500; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* ── Sections ── */
+  section { margin-bottom: 64px; }
+  .section-num {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--brand); opacity: 0.7; margin-bottom: 6px;
+  }
+  h2.section-title {
+    font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--accent);
+    color: var(--ink);
+  }
+  h3 { font-size: 1.05rem; font-weight: 700; margin: 28px 0 10px; color: var(--ink); }
+  h4 { font-size: 0.9rem; font-weight: 700; margin: 20px 0 8px; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.04em; }
+  p { color: var(--ink-2); margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── Decision cards ── */
+  .decision-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }
+  .decision-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .decision-card.winner {
+    border-color: var(--brand);
+    background: var(--accent);
+  }
+  .decision-card.winner::before {
+    content: "✓ CHOSEN";
+    position: absolute; top: 12px; right: 12px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.06em;
+    color: var(--brand);
+  }
+  .decision-card h4 { margin: 0 0 6px; font-size: 1rem; text-transform: none; letter-spacing: 0; color: var(--ink); }
+  .decision-card .verdict {
+    display: inline-block;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 4px; margin-bottom: 10px;
+  }
+  .verdict.yes { background: oklch(0.92 0.08 155); color: var(--green); }
+  .verdict.no  { background: oklch(0.95 0.04 25); color: var(--red); }
+  .verdict.ok  { background: oklch(0.96 0.06 75); color: oklch(0.52 0.18 75); }
+  .decision-card ul { font-size: 13px; color: var(--ink-2); padding-left: 16px; }
+  .decision-card li { margin: 3px 0; }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  thead th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); border-bottom: 2px solid var(--border); }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--ink-2); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--tinted); }
+  .yes-mark { color: var(--green); font-weight: 700; }
+  .no-mark  { color: var(--red); font-weight: 700; }
+
+  /* ── Code ── */
+  pre {
+    background: oklch(0.13 0.03 260);
+    color: oklch(0.90 0.03 200);
+    border-radius: 10px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.65;
+    margin: 16px 0;
+  }
+  code { font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace; }
+  pre code { color: inherit; }
+  .token-key   { color: oklch(0.75 0.16 205); }
+  .token-str   { color: oklch(0.78 0.14 150); }
+  .token-type  { color: oklch(0.78 0.15 70); }
+  .token-cmt   { color: oklch(0.55 0.04 260); font-style: italic; }
+  .token-brand { color: oklch(0.72 0.18 280); }
+  .token-num   { color: oklch(0.78 0.14 30); }
+  .token-op    { color: oklch(0.75 0.10 200); }
+
+  /* ── Callout ── */
+  .callout {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 16px 18px; border-radius: var(--radius);
+    margin: 20px 0;
+  }
+  .callout.info   { background: var(--accent); border: 1px solid oklch(0.80 0.10 260); }
+  .callout.warn   { background: oklch(0.97 0.06 75); border: 1px solid oklch(0.88 0.10 75); }
+  .callout.tip    { background: oklch(0.95 0.05 155); border: 1px solid oklch(0.82 0.10 155); }
+  .callout.danger { background: oklch(0.97 0.04 25); border: 1px solid oklch(0.88 0.10 25); }
+  .callout-icon { font-size: 18px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  .callout-body p { margin: 0; font-size: 14px; color: var(--ink); }
+  .callout-body strong { color: var(--ink); }
+
+  /* ── Phase timeline ── */
+  .phases { display: flex; flex-direction: column; gap: 0; margin: 24px 0; }
+  .phase { display: flex; gap: 0; position: relative; }
+  .phase-track { display: flex; flex-direction: column; align-items: center; width: 40px; flex-shrink: 0; }
+  .phase-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--brand); color: #fff;
+    display: grid; place-items: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0; z-index: 1;
+  }
+  .phase-line { width: 2px; background: var(--border); flex: 1; min-height: 24px; }
+  .phase:last-child .phase-line { display: none; }
+  .phase-body { padding: 4px 0 32px 16px; flex: 1; }
+  .phase-body h3 { margin: 0 0 6px; font-size: 1rem; }
+  .phase-body p { font-size: 14px; margin: 0 0 10px; }
+  .task-list { list-style: none; padding: 0; }
+  .task-list li {
+    font-size: 13px; color: var(--ink-2);
+    padding: 4px 0 4px 20px;
+    position: relative;
+    border-bottom: 1px dashed var(--border);
+  }
+  .task-list li:last-child { border-bottom: none; }
+  .task-list li::before { content: "→"; position: absolute; left: 0; color: var(--cyan); font-weight: 700; }
+
+  /* ── Wireframes ── */
+  .wireframe-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; align-items: flex-start; }
+  .wireframe {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11.5px; line-height: 1.55;
+    background: var(--tinted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    white-space: pre;
+    flex: 1; min-width: 240px;
+    color: var(--ink);
+  }
+  .wireframe-title {
+    font-family: -apple-system, sans-serif;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+
+  /* ── File tree ── */
+  .file-tree {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px; line-height: 1.75;
+    background: oklch(0.13 0.03 260);
+    color: oklch(0.86 0.02 260);
+    border-radius: 10px; padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .ft-dir  { color: oklch(0.75 0.16 205); }
+  .ft-new  { color: oklch(0.78 0.14 150); }
+  .ft-mod  { color: oklch(0.78 0.15 70); }
+  .ft-cmt  { color: oklch(0.50 0.04 260); font-style: italic; }
+
+  /* ── Stats grid ── */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 20px 0; }
+  .stat-card { border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; background: var(--surface); }
+  .stat-card .num { font-size: 1.8rem; font-weight: 800; color: var(--brand); line-height: 1; }
+  .stat-card .label { font-size: 12px; color: var(--ink-3); margin-top: 4px; }
+
+  /* ── Divider ── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+  /* ── Flow diagram ── */
+  .flow {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 0;
+    margin: 20px 0; padding: 20px;
+    background: var(--tinted); border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .flow-step {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 13px; font-weight: 600; color: var(--ink);
+    text-align: center; min-width: 110px;
+  }
+  .flow-step.brand { border-color: var(--brand); background: var(--accent); color: var(--brand); }
+  .flow-arrow { color: var(--ink-3); font-size: 18px; padding: 0 6px; }
+
+  /* ── Relay badge ── */
+  .relay-list { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+  .relay-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: oklch(0.13 0.03 260); color: oklch(0.82 0.05 155);
+    font-family: "JetBrains Mono", monospace; font-size: 12px;
+    padding: 5px 12px; border-radius: 6px;
+  }
+  .relay-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+
+  @media (max-width: 600px) {
+    body { padding: 28px 16px 80px; }
+    .doc-header { flex-direction: column; gap: 14px; }
+    .wireframe-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="doc-header">
+  <div class="doc-logo">👥</div>
+  <div>
+    <h1>FitnessPal — Buddy P2P</h1>
+    <p>Feature plan for peer-to-peer workout comparison, crew sync, and social accountability.</p>
+    <div class="doc-chips">
+      <span class="chip">Fully Client-Side</span>
+      <span class="chip">No Backend</span>
+      <span class="chip purple">Nostr Protocol</span>
+      <span class="chip green">Offline-First</span>
+      <span class="chip amber">Async Sync</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════ TOC ═══════════ -->
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#s1">Technology Decision — Why Nostr</a></li>
+    <li><a href="#s2">Architecture Overview</a></li>
+    <li><a href="#s3">Identity &amp; Cryptographic Pairing</a></li>
+    <li><a href="#s4">Data Model — Nostr Event Schema</a></li>
+    <li><a href="#s5">Sync Strategy &amp; Offline Emitter</a></li>
+    <li><a href="#s6">UI — Buddy Tab (Tab 2)</a></li>
+    <li><a href="#s7">UI — Analysis Tab Updates</a></li>
+    <li><a href="#s8">Component &amp; File Plan</a></li>
+    <li><a href="#s9">Implementation Phases</a></li>
+    <li><a href="#s10">Security &amp; Privacy</a></li>
+    <li><a href="#s11">Open Questions</a></li>
+  </ol>
+</nav>
+
+
+<!-- ═══════════ S1: TECH DECISION ═══════════ -->
+<section id="s1">
+  <div class="section-num">Section 01</div>
+  <h2 class="section-title">Technology Decision — Why Nostr</h2>
+
+  <p>Requirements: fully client-side, no backend, async (users don't need to be online simultaneously), pairing via shared hash, free, reliable. The key constraint that kills most candidates is <strong>async</strong> — WebRTC-based tools require both peers online at the same moment.</p>
+
+  <div class="decision-grid">
+
+    <div class="decision-card winner">
+      <h4>Nostr Protocol</h4>
+      <span class="verdict yes">✓ Chosen</span>
+      <ul>
+        <li>100+ independent relay operators</li>
+        <li>Events stored on relays → async by design</li>
+        <li>secp256k1 identity baked in</li>
+        <li>Relay redundancy: any 2 of 5 working = ✓</li>
+        <li><code>nostr-tools</code> v2 — ~50KB, actively maintained</li>
+        <li>Millions of real users, battle-tested</li>
+        <li>Events are signed + verifiable</li>
+        <li>No account, no config, no cost</li>
+      </ul>
+    </div>
+
+    <div class="decision-card">
+      <h4>Gun.js</h4>
+      <span class="verdict no">✗ Rejected</span>
+      <ul>
+        <li>Public relays (gun.eco, wallie, heroku) unreliable / offline frequently</li>
+        <li>Relay mesh has a single community bottleneck</li>
+        <li>HAM CRDT works well in theory</li>
+        <li>SEA crypto is solid</li>
+        <li><strong>Infrastructure too fragile for production</strong></li>
+      </ul>
+    </div>
+
+    <div class="decision-card">
+      <h4>Trystero</h4>
+      <span class="verdict no">✗ Skip</span>
+      <ul>
+        <li>Elegant WebRTC signaling library</li>
+        <li>Can use Nostr/BitTorrent as signal</li>
+        <li><strong>Both peers must be online</strong></li>
+        <li>Data lost if recipient is offline</li>
+        <li>Great for live chat — wrong for log sync</li>
+      </ul>
+    </div>
+
+    <div class="decision-card">
+      <h4>Firebase / Supabase</h4>
+      <span class="verdict no">✗ Skip</span>
+      <ul>
+        <li>Reliable, realtime, offline support</li>
+        <li>Requires account + project setup</li>
+        <li>Data on vendor servers</li>
+        <li><strong>Violates "no backend" principle</strong></li>
+        <li>Lock-in risk, free tier limits</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <h3>What is Nostr?</h3>
+  <p>Nostr (Notes and Other Stuff Transmitted by Relays) is an open protocol for decentralized communication. Clients publish cryptographically signed <strong>events</strong> to any number of <strong>relays</strong>. Relays are simple WebSocket servers that store and serve events. Anyone can run a relay — there's no central authority. The protocol is NIP-01 standard; events are JSON blobs signed with secp256k1.</p>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <p><strong>The key insight:</strong> Nostr relays are essentially persistent message stores with filter-based subscriptions. User A publishes a workout event → relay stores it. User B subscribes to that room's events → gets it when they next come online. Neither user needs to be online simultaneously. This is fundamentally different from WebRTC.</p>
+    </div>
+  </div>
+
+  <h3>Relay Network (what we connect to)</h3>
+  <p>We connect to 5 relays simultaneously via <code>SimplePool</code> from <code>nostr-tools</code>. Events are published to all; subscriptions read from all (deduplicated by event ID). If 3 of 5 are down, the app still syncs.</p>
+
+  <div class="relay-list">
+    <div class="relay-badge"><span class="relay-dot"></span>wss://relay.damus.io</div>
+    <div class="relay-badge"><span class="relay-dot"></span>wss://relay.nostr.band</div>
+    <div class="relay-badge"><span class="relay-dot"></span>wss://nos.lol</div>
+    <div class="relay-badge"><span class="relay-dot"></span>wss://nostr.wine</div>
+    <div class="relay-badge"><span class="relay-dot"></span>wss://relay.snort.social</div>
+  </div>
+
+  <p>These relays are independently operated by large teams (Damus, Snort, nos.lol, Nostr.band) with strong uptime incentives. They're free to use for read/write. Contrast this with Gun's handful of community Heroku dynos that go to sleep.</p>
+
+  <div class="callout info">
+    <span class="callout-icon">📦</span>
+    <div class="callout-body">
+      <p><strong>Dependency:</strong> <code>npm install nostr-tools</code> — that's the only new runtime dep. ~50KB gzipped. Provides: key generation, event signing, <code>SimplePool</code> for multi-relay connections, filter subscriptions, and NIP encodings. No other packages needed.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ S2: ARCHITECTURE ═══════════ -->
+<section id="s2">
+  <div class="section-num">Section 02</div>
+  <h2 class="section-title">Architecture Overview</h2>
+
+  <p>The buddy system is purely additive — existing workout, analysis, and settings logic is untouched. All new code lives in its own layer.</p>
+
+<pre><code><span class="token-cmt">┌──────────────────────── Browser (localStorage) ────────────────────────┐</span>
+<span class="token-cmt">│                                                                         │</span>
+<span class="token-cmt">│  ┌─────────────────┐  ┌─────────────────┐  ┌────────────────────────┐ │</span>
+<span class="token-cmt">│  │  fp.ai          │  │  fp.prefs       │  │  fp.buddy.identity     │ │</span>
+<span class="token-cmt">│  │  fp.user        │  │  fp.history     │  │  fp.buddy.rooms        │ │</span>
+<span class="token-cmt">│  │  (existing)     │  │  (existing)     │  │  fp.buddy.lastFetch    │ │</span>
+<span class="token-cmt">│  └─────────────────┘  └─────────────────┘  └────────────────────────┘ │</span>
+<span class="token-cmt">│                                     NEW ↑                               │</span>
+<span class="token-cmt">└──────────────────────────────────────┬─────────────────────────────────┘</span>
+                                        <span class="token-cmt">│ nostr-tools SimplePool (WebSocket)</span>
+<span class="token-cmt">       ┌────────────────────────────────┴───────────────────────────────┐</span>
+<span class="token-cmt">       │             Nostr Relay Network (5 independent relays)         │</span>
+<span class="token-cmt">       │                                                                 │</span>
+<span class="token-cmt">       │   relay.damus.io  ·  relay.nostr.band  ·  nos.lol             │</span>
+<span class="token-cmt">       │   nostr.wine  ·  relay.snort.social                           │</span>
+<span class="token-cmt">       │                                                                 │</span>
+<span class="token-cmt">       │   Each relay stores events independently. Any relay that       │</span>
+<span class="token-cmt">       │   has the event can serve it — no single point of failure.     │</span>
+<span class="token-cmt">       └───────────────────────────┬─────────────────────────────────────┘</span>
+                                    <span class="token-cmt">│ same subscription filter</span>
+<span class="token-cmt">       ┌───────────────────────────┴─────────────────────────────────────┐</span>
+<span class="token-cmt">       │              Buddy's Browser                                     │</span>
+<span class="token-cmt">       │   pool.subscribeMany(RELAYS, [{ kinds:[31337,31338],            │</span>
+<span class="token-cmt">       │     "#r":[roomHash], since: lastFetchAt }], { onevent })        │</span>
+<span class="token-cmt">       └─────────────────────────────────────────────────────────────────┘</span></code></pre>
+
+  <h3>What "Room" Means on Nostr</h3>
+  <p>We define a custom <code>#r</code> tag (NIP-12 generic tag query). All FitnessPal buddy events carry <code>["r", roomHash]</code>. To subscribe to a crew, query: <code>{ kinds: [31337, 31338], "#r": [roomHash] }</code>. The relay filters and returns only events in that room. Two different invite codes produce two different room hashes — crews are completely isolated.</p>
+
+  <div class="callout tip">
+    <span class="callout-icon">🔑</span>
+    <div class="callout-body">
+      <p><strong>Room isolation:</strong> <code>roomHash = hex(SHA-256(inviteCode)).slice(0, 24)</code>. Anyone who doesn't know the original invite code cannot discover the room hash (preimage resistance). Relay sees an opaque hex string, not a room name or user identity.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ S3: IDENTITY & PAIRING ═══════════ -->
+<section id="s3">
+  <div class="section-num">Section 03</div>
+  <h2 class="section-title">Identity &amp; Cryptographic Pairing</h2>
+
+  <h3>Identity Bootstrap</h3>
+  <p>On first Buddy tab visit, <code>nostr-tools</code> generates a secp256k1 keypair. The public key becomes the user's permanent identifier. The private key signs all events — it never leaves the device.</p>
+
+<pre><code><span class="token-cmt">// Generated once, stored in fp.buddy.identity (localStorage)</span>
+<span class="token-key">interface</span> <span class="token-type">BuddyIdentity</span> {
+  privkey:  <span class="token-type">string</span>;   <span class="token-cmt">// hex — signs events, NEVER published</span>
+  pubkey:   <span class="token-type">string</span>;   <span class="token-cmt">// hex — user's permanent ID, safe to share</span>
+  alias:    <span class="token-type">string</span>;   <span class="token-cmt">// from UserSettings.name or "Athlete"</span>
+  initials: <span class="token-type">string</span>;   <span class="token-cmt">// "JD" for display</span>
+  color:    <span class="token-type">string</span>;   <span class="token-cmt">// OKLCH hue, deterministic from pubkey hash</span>
+}
+
+<span class="token-cmt">// Generation (one-time, lazy):</span>
+<span class="token-key">import</span> { generateSecretKey, getPublicKey } <span class="token-op">from</span> <span class="token-str">"nostr-tools/pure"</span>;
+
+<span class="token-key">const</span> privkeyBytes = generateSecretKey();                    <span class="token-cmt">// Uint8Array</span>
+<span class="token-key">const</span> privkey      = bytesToHex(privkeyBytes);
+<span class="token-key">const</span> pubkey       = getPublicKey(privkeyBytes);             <span class="token-cmt">// hex string</span></code></pre>
+
+  <h3>Invite Code Generation</h3>
+  <div class="flow">
+    <div class="flow-step brand">User taps<br/>"Create Room"</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">8 random bytes<br/><code>crypto.getRandomValues</code></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Base36 encode<br/><code>"X7K2P9QM"</code></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Display, copy<br/>Share with buddy</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step brand">Internally:<br/>SHA-256 → roomHash</div>
+  </div>
+
+  <h3>Joining a Room</h3>
+  <div class="flow">
+    <div class="flow-step brand">User enters<br/>invite code</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><code>SHA-256(code)</code><br/>→ roomHash</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Subscribe to<br/><code>#r: [roomHash]</code></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step brand">Publish own<br/>profile + logs</div>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <p><strong>Code reuse:</strong> The same invite code is a room, not a 1:1 link. Multiple buddies can join with the same code. This enables group crews. To "leave a room", the user removes it from <code>fp.buddy.rooms</code> locally — their old events stay on relays but they stop subscribing to or publishing into that room.</p>
+    </div>
+  </div>
+
+  <h3>Room Record (localStorage)</h3>
+<pre><code><span class="token-key">interface</span> <span class="token-type">BuddyRoom</span> {
+  id:        <span class="token-type">string</span>;    <span class="token-cmt">// roomHash, 24 hex chars</span>
+  code:      <span class="token-type">string</span>;    <span class="token-cmt">// human invite code "X7K2P9QM"</span>
+  label:     <span class="token-type">string</span>;    <span class="token-cmt">// user-editable name "Gym Crew"</span>
+  joinedAt:  <span class="token-type">string</span>;    <span class="token-cmt">// ISO timestamp</span>
+  isCreator: <span class="token-type">boolean</span>;   <span class="token-cmt">// generated this code?</span>
+}
+
+<span class="token-cmt">// fp.buddy.rooms → BuddyRoom[]
+// fp.buddy.lastFetch → Record&lt;roomHash, unixTimestamp&gt;  (for "since" param)</span></code></pre>
+</section>
+
+
+<!-- ═══════════ S4: DATA MODEL ═══════════ -->
+<section id="s4">
+  <div class="section-num">Section 04</div>
+  <h2 class="section-title">Data Model — Nostr Event Schema</h2>
+
+  <p>We use two custom Nostr event kinds. Both are <strong>parameterized replaceable</strong> (30000–39999 range per NIP-01): re-publishing the same <code>d</code> tag value replaces the previous event, so re-syncing is idempotent.</p>
+
+<pre><code><span class="token-cmt">// Kind 31337 — Workout Log entry (one per WorkoutLog.id)</span>
+{
+  <span class="token-key">kind</span>:       <span class="token-num">31337</span>,
+  <span class="token-key">pubkey</span>:     <span class="token-str">"&lt;user pubkey hex&gt;"</span>,
+  <span class="token-key">created_at</span>: <span class="token-num">1719273600</span>,         <span class="token-cmt">// unix seconds</span>
+  <span class="token-key">tags</span>: [
+    [<span class="token-str">"d"</span>, <span class="token-str">"&lt;WorkoutLog.id&gt;"</span>],     <span class="token-cmt">// dedup key → replaceable</span>
+    [<span class="token-str">"r"</span>, <span class="token-str">"&lt;roomHash&gt;"</span>],         <span class="token-cmt">// room filter</span>
+    [<span class="token-str">"t"</span>, <span class="token-str">"fitnesspal"</span>],         <span class="token-cmt">// app namespace</span>
+  ],
+  <span class="token-key">content</span>:    <span class="token-str">"&lt;JSON.stringify(WorkoutLog)&gt;"</span>,
+  <span class="token-key">sig</span>:        <span class="token-str">"&lt;secp256k1 signature&gt;"</span>   <span class="token-cmt">// from finalizeEvent()</span>
+}
+
+<span class="token-cmt">// Kind 31338 — Buddy Profile (one per user per room)</span>
+{
+  <span class="token-key">kind</span>:       <span class="token-num">31338</span>,
+  <span class="token-key">pubkey</span>:     <span class="token-str">"&lt;user pubkey hex&gt;"</span>,
+  <span class="token-key">created_at</span>: <span class="token-num">1719273600</span>,
+  <span class="token-key">tags</span>: [
+    [<span class="token-str">"d"</span>, <span class="token-str">"profile"</span>],              <span class="token-cmt">// always "profile" → one record per pubkey</span>
+    [<span class="token-str">"r"</span>, <span class="token-str">"&lt;roomHash&gt;"</span>],
+    [<span class="token-str">"t"</span>, <span class="token-str">"fitnesspal"</span>],
+  ],
+  <span class="token-key">content</span>:    <span class="token-str">"&lt;JSON.stringify(BuddyProfile)&gt;"</span>,
+  <span class="token-key">sig</span>:        <span class="token-str">"&lt;sig&gt;"</span>
+}</code></pre>
+
+  <h3>BuddyProfile Shape</h3>
+<pre><code><span class="token-key">interface</span> <span class="token-type">BuddyProfile</span> {
+  alias:    <span class="token-type">string</span>;   <span class="token-cmt">// display name (capped 32 chars, sanitized)</span>
+  initials: <span class="token-type">string</span>;   <span class="token-cmt">// "JD" — max 2 chars</span>
+  color:    <span class="token-type">string</span>;   <span class="token-cmt">// OKLCH hue (deterministic from pubkey)</span>
+  lastSeen: <span class="token-type">string</span>;   <span class="token-cmt">// ISO — updated on every sync push</span>
+}
+
+<span class="token-cmt">// WorkoutLog (existing type) — only status === "completed" entries published</span></code></pre>
+
+  <h3>What Stays Local (never published)</h3>
+  <table>
+    <thead><tr><th>Field</th><th>Why private</th></tr></thead>
+    <tbody>
+      <tr><td>OpenRouter API key</td><td>Sensitive credential, separate localStorage key</td></tr>
+      <tr><td>Theme / reminder settings</td><td>Personal, irrelevant to peers</td></tr>
+      <tr><td>Nostr <code>privkey</code></td><td>Signs events — if exposed, impersonation risk</td></tr>
+      <tr><td>Workout preferences</td><td>Not meaningful to compare raw prefs</td></tr>
+      <tr><td>Skipped workouts</td><td>Only completed sessions go to peers</td></tr>
+      <tr><td>AI-generated workout content</td><td>Exercises, warmup, cooldown — not in logs</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Computed Comparison Metrics</h3>
+  <p>All analytics computed client-side from synced <code>WorkoutLog[]</code>. Pure functions in <code>buddy-metrics.ts</code>.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="num">7</div><div class="label">Metrics per buddy</div></div>
+    <div class="stat-card"><div class="num">30d</div><div class="label">History window published</div></div>
+    <div class="stat-card"><div class="num">0</div><div class="label">Server-side computation</div></div>
+    <div class="stat-card"><div class="num">∞</div><div class="label">Buddies per room</div></div>
+  </div>
+
+  <table>
+    <thead><tr><th>Metric</th><th>How computed</th><th>Used in</th></tr></thead>
+    <tbody>
+      <tr><td>Weekly session count</td><td>logs in current ISO week</td><td>Leaderboard, bar chart</td></tr>
+      <tr><td>Current streak</td><td>consecutive days with ≥1 completed log</td><td>Leaderboard, buddy card</td></tr>
+      <tr><td>Muscle frequency</td><td>muscle tag count per period</td><td>Radar overlay</td></tr>
+      <tr><td>Favorite style</td><td>statistical mode of style field</td><td>Buddy detail card</td></tr>
+      <tr><td>Total duration</td><td>sum of duration over period</td><td>Buddy detail card</td></tr>
+      <tr><td>Days since last workout</td><td>now − newest log date</td><td>Buddy list (accountability nudge)</td></tr>
+      <tr><td>Consistency %</td><td>active days / 30</td><td>Analysis tab comparison bars</td></tr>
+    </tbody>
+  </table>
+</section>
+
+
+<!-- ═══════════ S5: SYNC STRATEGY ═══════════ -->
+<section id="s5">
+  <div class="section-num">Section 05</div>
+  <h2 class="section-title">Sync Strategy &amp; Offline Emitter</h2>
+
+  <h3>Push / Pull Lifecycle</h3>
+
+<pre><code><span class="token-cmt">On Buddy tab mount (useBuddySync hook)</span>
+  <span class="token-cmt">├─ 1. Get/create Nostr SimplePool singleton</span>
+  <span class="token-cmt">├─ 2. For each BuddyRoom in fp.buddy.rooms:</span>
+  <span class="token-cmt">│     ├─ Compute lastFetch = fp.buddy.lastFetch[roomHash] ?? 0</span>
+  <span class="token-cmt">│     └─ pool.subscribeMany(RELAYS, [{</span>
+  <span class="token-cmt">│           kinds: [31337, 31338],</span>
+  <span class="token-cmt">│           "#r":  [roomHash],</span>
+  <span class="token-cmt">│           "#t":  ["fitnesspal"],</span>
+  <span class="token-cmt">│           since: lastFetch - 60,   // 60s overlap for clock skew</span>
+  <span class="token-cmt">│         }], { onevent: handleIncoming })</span>
+  <span class="token-cmt">└─ 3. Push own profile + last 30d logs to all relays</span>
+
+<span class="token-cmt">handleIncoming(event)</span>
+  <span class="token-cmt">├─ verifyEvent(event)             // signature check — reject fakes</span>
+  <span class="token-cmt">├─ kind 31338 → upsert buddyProfiles[pubkey]</span>
+  <span class="token-cmt">└─ kind 31337 → upsert buddyLogs[pubkey][logId]</span>
+
+<span class="token-cmt">Sync Emitter (useSyncEmitter hook)</span>
+  <span class="token-cmt">├─ setInterval: push own profile + logs every SYNC_INTERVAL (5 min)</span>
+  <span class="token-cmt">├─ document visibilitychange → "visible": re-push immediately</span>
+  <span class="token-cmt">└─ useHistory.log() fires: push the new log immediately</span>
+
+<span class="token-cmt">On push: update fp.buddy.lastFetch[roomHash] = Math.floor(Date.now()/1000)</span></code></pre>
+
+  <h3>Offline Behavior</h3>
+  <p>Nostr is inherently async. When a user is offline:</p>
+  <ul style="padding-left:20px; color:var(--ink-2); font-size:14px; line-height:2;">
+    <li>They can still log workouts locally (existing behavior, unchanged).</li>
+    <li>On next app open with network: subscribe with <code>since: lastFetchAt</code> → relay returns all missed events.</li>
+    <li>Their own unpublished logs queue is pushed on reconnect.</li>
+    <li>No Gun-style offline queue to manage — Nostr relays store events for weeks/months.</li>
+  </ul>
+
+  <div class="callout tip">
+    <span class="callout-icon">⏱</span>
+    <div class="callout-body">
+      <p><strong>No background sync needed:</strong> Service Workers in PWAs can't keep WebSocket connections alive reliably. Instead, sync happens on every app foreground. The <code>since</code> filter on Nostr means we only download what changed — subscriptions are cheap even after days offline.</p>
+    </div>
+  </div>
+
+  <h3>Sync Constants</h3>
+  <table>
+    <thead><tr><th>Constant</th><th>Value</th><th>Rationale</th></tr></thead>
+    <tbody>
+      <tr><td><code>NOSTR_RELAYS</code></td><td>5 relays</td><td>Any 2 healthy = full sync coverage</td></tr>
+      <tr><td><code>SYNC_INTERVAL</code></td><td>5 minutes</td><td>Foreground refresh cadence</td></tr>
+      <tr><td><code>MAX_LOGS_PER_PUSH</code></td><td>90 events</td><td>30 days × 3 sessions/day ceiling</td></tr>
+      <tr><td><code>ONLINE_THRESHOLD</code></td><td>15 minutes</td><td><code>now − lastSeen &lt; 15min</code> → green dot</td></tr>
+      <tr><td><code>LOG_PUBLISH_SINCE</code></td><td>30 days</td><td>Prune older logs from push (matches history window)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Event Deduplication</h3>
+  <p>Nostr events have a deterministic <code>id</code> (SHA-256 of serialized content). The same workout log published twice produces the same event ID — relays and our in-memory state both deduplicate by ID automatically. Re-syncing is always safe.</p>
+</section>
+
+
+<!-- ═══════════ S6: BUDDY TAB UI ═══════════ -->
+<section id="s6">
+  <div class="section-num">Section 06</div>
+  <h2 class="section-title">UI — Buddy Tab (Tab 2)</h2>
+
+  <p>Buddy sits at <strong>position 2</strong> in the bottom nav: <strong>Workout → Buddy → Insights → Settings</strong>.</p>
+
+  <h3>Screen States</h3>
+
+  <div class="wireframe-row">
+
+    <div>
+      <div class="wireframe-title">State A — No crew yet (empty)</div>
+      <div class="wireframe">┌─────────────────────────┐
+│  Buddy         ◌ offline │
+├─────────────────────────┤
+│                          │
+│                          │
+│          👥              │
+│   No crew yet.           │
+│   Train together,        │
+│   stay accountable.      │
+│                          │
+│  ┌──────────┐ ┌────────┐ │
+│  │ + Create │ │  Join  │ │
+│  │   Room   │ │  Room  │ │
+│  └──────────┘ └────────┘ │
+│                          │
+└─────────────────────────┘</div>
+    </div>
+
+    <div>
+      <div class="wireframe-title">State B — Create Room (code reveal)</div>
+      <div class="wireframe">┌─────────────────────────┐
+│  ← Create Room           │
+├─────────────────────────┤
+│                          │
+│  Share this code with    │
+│  your buddy              │
+│                          │
+│  ╔═══════════════════╗  │
+│  ║  X7K2  ·  P9QM  ║  │
+│  ╚═══════════════════╝  │
+│                          │
+│  [ 📋 Copy Code  ]       │
+│  [ 📤 Share via... ]     │
+│                          │
+│  Room name               │
+│  [ My Gym Crew      ]    │
+│                          │
+│  ⏳ Waiting for buddy…   │
+└─────────────────────────┘</div>
+    </div>
+
+    <div>
+      <div class="wireframe-title">State C — Join Room (code entry)</div>
+      <div class="wireframe">┌─────────────────────────┐
+│  ← Join a Room           │
+├─────────────────────────┤
+│                          │
+│  Enter the code your     │
+│  buddy shared            │
+│                          │
+│  [  ][  ][  ][  ]·      │
+│  [  ][  ][  ][  ]        │
+│  8-character invite code │
+│                          │
+│  Room name (optional)    │
+│  [ e.g. Work Crew   ]    │
+│                          │
+│  ┌────────────────────┐  │
+│  │      Join Room     │  │
+│  └────────────────────┘  │
+│                          │
+└─────────────────────────┘</div>
+    </div>
+
+  </div>
+
+  <div class="wireframe-row">
+
+    <div>
+      <div class="wireframe-title">State D — Active crew list</div>
+      <div class="wireframe">┌─────────────────────────┐
+│  Buddy      🟢 2 online  │
+├─────────────────────────┤
+│  🏆 This Week            │
+│  ┌──────┬──────┬──────┐ │
+│  │  🥇  │  🥈  │  🥉  │ │
+│  │  You │ Alex │  Sam │ │
+│  │  5   │  3   │  1   │ │
+│  └──────┴──────┴──────┘ │
+├─────────────────────────┤
+│  My Gym Crew             │
+│  ┌───────────────────┐  │
+│  │ 🟢 Alex           │  │
+│  │    3 sessions ·   │  │
+│  │    🔥 5-day streak │  │
+│  │    Last: 2h ago    │  │
+│  ├───────────────────┤  │
+│  │ ◌ Sam             │  │
+│  │    1 session ·    │  │
+│  │    Last: 3d ago    │  │
+│  └───────────────────┘  │
+│  [+ Invite Another]     │
+└─────────────────────────┘</div>
+    </div>
+
+    <div>
+      <div class="wireframe-title">State E — Buddy detail (tap → sheet)</div>
+      <div class="wireframe">┌─────────────────────────┐
+│  ← Alex · 5-day streak  │
+├─────────────────────────┤
+│  ┌─────┐  Alex K.        │
+│  │ AK  │  🟢 Active 2h   │
+│  └─────┘  Advanced       │
+├─────────────────────────┤
+│  Head-to-Head · 30 days  │
+│            You    Alex   │
+│  Sessions   12      9    │
+│  Streak     7d      5d   │
+│  Duration  6.5h    4.5h  │
+│  Style      Trad    HIIT  │
+├─────────────────────────┤
+│  Muscle Focus (radar)    │
+│    ╭── chest / shld ──╮  │
+│  back               legs │
+│    ╰─── core / arms ──╯  │
+│   ── You  ╌╌ Alex        │
+├─────────────────────────┤
+│  Alex's recent sessions  │
+│  ● Mon · Upper Dumbbell  │
+│  ● Sat · Full Body Blast │
+│  ● Thu · Core & Cardio   │
+└─────────────────────────┘</div>
+    </div>
+
+  </div>
+
+  <h3>Tab Order Update</h3>
+  <table>
+    <thead><tr><th>Position</th><th>Tab</th><th>Icon</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Workout</td><td>Dumbbell</td><td>No change</td></tr>
+      <tr><td><strong>2 (new)</strong></td><td><strong>Buddy</strong></td><td><strong>Users</strong></td><td><strong>New tab</strong></td></tr>
+      <tr><td>3</td><td>Insights</td><td>BarChart3</td><td>Shifted from 2</td></tr>
+      <tr><td>4</td><td>Settings</td><td>Settings</td><td>Shifted from 3</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout info">
+    <span class="callout-icon">🔴</span>
+    <div class="callout-body">
+      <p><strong>Tab badge:</strong> A small count badge on the Buddy icon when a buddy has logged a new workout since the user's last Buddy tab visit. Computed from <code>fp.buddy.lastVisit</code> timestamp vs. incoming event <code>created_at</code> — no push notifications needed.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ S7: ANALYSIS TAB UPDATES ═══════════ -->
+<section id="s7">
+  <div class="section-num">Section 07</div>
+  <h2 class="section-title">UI — Analysis Tab Updates</h2>
+
+  <p>Insights gains a "vs. Crew" section at the bottom, shown conditionally when the user has at least one synced buddy. Solo charts above it are unchanged.</p>
+
+  <div class="wireframe-row">
+    <div>
+      <div class="wireframe-title">Analysis tab — new crew section</div>
+      <div class="wireframe">┌─────────────────────────┐
+│  Insights                │
+├─────────────────────────┤
+│  [existing solo charts]  │
+│  · Headline stats        │
+│  · 30-day heatmap        │
+│  · Weekly sessions       │
+│  · Muscle radar          │
+│  · Style / equipment     │
+├─────────────────────────┤
+│  ── vs. Your Crew ──     │
+│                          │
+│  Weekly Sessions         │
+│  ▓▓▓▓▓▓▓░  You   5      │
+│  ▓▓▓▓░░░░  Alex  3      │
+│  ▓▓░░░░░░  Sam   2      │
+│                          │
+│  Muscle Focus (overlay)  │
+│  [radar — 3 overlaid]    │
+│                          │
+│  Consistency · 30 days   │
+│  You  ▓▓▓▓▓▓▓▓▓░ 90%    │
+│  Alex ▓▓▓▓▓▓░░░░ 65%    │
+│  Sam  ▓▓▓░░░░░░░ 32%    │
+└─────────────────────────┘</div>
+    </div>
+
+    <div>
+      <div class="wireframe-title">Weekly bar — buddy overlay mode</div>
+      <div class="wireframe">┌─────────────────────────┐
+│  Weekly Sessions         │
+│  [ Solo ] [ vs. Crew ]   │
+├─────────────────────────┤
+│                          │
+│  5 ┤  ██                 │
+│  4 ┤  ██  ░░             │
+│  3 ┤  ██  ░░  ██         │
+│  2 ┤  ██  ░░  ██  ░░     │
+│  1 ┤  ██  ░░  ██  ░░     │
+│  0 └──────────────────   │
+│     Mon  Tue  Wed  Thu   │
+│                          │
+│  ■ You  □ Alex  ▨ Sam   │
+│                          │
+└─────────────────────────┘</div>
+    </div>
+  </div>
+
+  <h3>New Comparison Widgets</h3>
+  <table>
+    <thead><tr><th>Widget</th><th>Component</th><th>Data</th></tr></thead>
+    <tbody>
+      <tr><td>Crew weekly bar (grouped)</td><td><code>CrewBarChart</code> organism</td><td>buddyLogs + own history</td></tr>
+      <tr><td>Muscle radar overlay</td><td><code>RadarChart</code> extended (multi-series)</td><td>per-user muscle counts</td></tr>
+      <tr><td>Consistency bars</td><td><code>ConsistencyBars</code> molecule</td><td>active days / 30 per user</td></tr>
+      <tr><td>Mini leaderboard (Buddy tab)</td><td><code>Leaderboard</code> molecule</td><td>weekly session counts</td></tr>
+      <tr><td>Buddy avatar group</td><td><code>AvatarStack</code> atom</td><td>BuddyProfile[ ] per room</td></tr>
+    </tbody>
+  </table>
+</section>
+
+
+<!-- ═══════════ S8: FILE PLAN ═══════════ -->
+<section id="s8">
+  <div class="section-num">Section 08</div>
+  <h2 class="section-title">Component &amp; File Plan</h2>
+
+  <div class="file-tree"><code><span class="ft-dir">src/</span>
+├── <span class="ft-dir">types/</span>
+│   └── index.ts                     <span class="ft-mod">[MOD]</span> <span class="ft-cmt">+ BuddyIdentity, BuddyRoom, BuddyProfile, BuddyPeer</span>
+│
+├── <span class="ft-dir">lib/</span>
+│   ├── <span class="ft-new">nostr.ts</span>                    <span class="ft-new">[NEW]</span> <span class="ft-cmt">SimplePool singleton, RELAYS list, pool accessor</span>
+│   ├── <span class="ft-new">buddy-store.ts</span>              <span class="ft-new">[NEW]</span> <span class="ft-cmt">identityStore, roomsStore, lastFetchStore (createStore)</span>
+│   ├── <span class="ft-new">buddy-publish.ts</span>            <span class="ft-new">[NEW]</span> <span class="ft-cmt">buildEvent(), signAndPublish() — wraps nostr-tools</span>
+│   ├── <span class="ft-new">buddy-subscribe.ts</span>          <span class="ft-new">[NEW]</span> <span class="ft-cmt">subscribeRoom(), parseIncoming() — verify + parse events</span>
+│   └── <span class="ft-new">buddy-metrics.ts</span>            <span class="ft-new">[NEW]</span> <span class="ft-cmt">Pure fns: streak, weeklyCount, consistencyPct, etc.</span>
+│
+├── <span class="ft-dir">hooks/</span>
+│   ├── <span class="ft-new">useBuddyIdentity.ts</span>         <span class="ft-new">[NEW]</span> <span class="ft-cmt">Lazy keygen, expose read-only profile (alias/initials/color)</span>
+│   ├── <span class="ft-new">useBuddyRooms.ts</span>            <span class="ft-new">[NEW]</span> <span class="ft-cmt">CRUD on rooms: create/join/leave/rename</span>
+│   ├── <span class="ft-new">useBuddySync.ts</span>             <span class="ft-new">[NEW]</span> <span class="ft-cmt">Subscribe to all rooms, return peers map + logs map</span>
+│   └── <span class="ft-new">useSyncEmitter.ts</span>           <span class="ft-new">[NEW]</span> <span class="ft-cmt">5-min setInterval + visibilitychange push trigger</span>
+│
+├── <span class="ft-dir">components/</span>
+│   ├── <span class="ft-dir">atoms/</span>
+│   │   └── <span class="ft-new">Avatar/</span>                 <span class="ft-new">[NEW]</span> <span class="ft-cmt">Initials circle, oklch hue from prop</span>
+│   │
+│   ├── <span class="ft-dir">molecules/</span>
+│   │   ├── <span class="ft-new">AvatarStack/</span>            <span class="ft-new">[NEW]</span> <span class="ft-cmt">2-3 overlapping avatars + overflow "+N" count</span>
+│   │   ├── <span class="ft-new">Leaderboard/</span>            <span class="ft-new">[NEW]</span> <span class="ft-cmt">Gold/silver/bronze podium + ranked list</span>
+│   │   ├── <span class="ft-new">BuddyCard/</span>              <span class="ft-new">[NEW]</span> <span class="ft-cmt">Peer row: avatar, name, stats, online dot, tap target</span>
+│   │   ├── <span class="ft-new">ConsistencyBars/</span>        <span class="ft-new">[NEW]</span> <span class="ft-cmt">Horizontal % bars ranked by consistency</span>
+│   │   └── <span class="ft-new">InviteCodeInput/</span>        <span class="ft-new">[NEW]</span> <span class="ft-cmt">8-char segmented entry, auto-advance per segment</span>
+│   │
+│   └── <span class="ft-dir">organisms/</span>
+│       ├── <span class="ft-new">BuddyLobby/</span>             <span class="ft-new">[NEW]</span> <span class="ft-cmt">Empty state + Create / Join CTAs</span>
+│       ├── <span class="ft-new">BuddyCreator/</span>           <span class="ft-new">[NEW]</span> <span class="ft-cmt">Code reveal card, copy/share, waiting state</span>
+│       ├── <span class="ft-new">BuddyJoiner/</span>            <span class="ft-new">[NEW]</span> <span class="ft-cmt">Code input form + room name + join action</span>
+│       ├── <span class="ft-new">BuddyRoomList/</span>          <span class="ft-new">[NEW]</span> <span class="ft-cmt">Room header + BuddyCard list + invite CTA</span>
+│       ├── <span class="ft-new">BuddyDetail/</span>            <span class="ft-new">[NEW]</span> <span class="ft-cmt">Peer sheet: head-to-head table, radar, log list</span>
+│       ├── <span class="ft-new">CrewBarChart/</span>           <span class="ft-new">[NEW]</span> <span class="ft-cmt">Grouped weekly bars for N users</span>
+│       ├── RadarChart/               <span class="ft-mod">[MOD]</span> <span class="ft-cmt">+ series prop ({label, data, color}[]) for multi-user</span>
+│       └── AnalyticsDashboard/       <span class="ft-mod">[MOD]</span> <span class="ft-cmt">+ "vs. Crew" section (conditional on buddyPeers.length)</span>
+│
+└── <span class="ft-dir">pages/</span>
+    ├── <span class="ft-new">BuddyTab/</span>               <span class="ft-new">[NEW]</span> <span class="ft-cmt">Phase machine: lobby → create/join → rooms → detail</span>
+    └── AnalysisTab/              <span class="ft-mod">[MOD]</span> <span class="ft-cmt">Accept + pass buddyPeers from useBuddySync</span>
+
+App.tsx                           <span class="ft-mod">[MOD]</span> <span class="ft-cmt">Add "buddy" at position 2, mount useSyncEmitter</span></code></div>
+
+  <h3>Key Code Sketch — types/index.ts</h3>
+<pre><code><span class="token-cmt">/* ---- Buddy P2P Types ----------------------------------------------------- */</span>
+
+<span class="token-key">export interface</span> BuddyIdentity {
+  privkey:  <span class="token-type">string</span>;   <span class="token-cmt">// hex secret key</span>
+  pubkey:   <span class="token-type">string</span>;   <span class="token-cmt">// hex public key</span>
+  alias:    <span class="token-type">string</span>;   <span class="token-cmt">// display name</span>
+  initials: <span class="token-type">string</span>;   <span class="token-cmt">// 2-character initials</span>
+  color:    <span class="token-type">string</span>;   <span class="token-cmt">// deterministic OKLCH hue [0-360]</span>
+}
+
+<span class="token-key">export interface</span> BuddyRoom {
+  id:        <span class="token-type">string</span>;   <span class="token-cmt">// SHA-256 roomHash of inviteCode</span>
+  code:      <span class="token-type">string</span>;   <span class="token-cmt">// human invite code, e.g. "X7K2P9QM"</span>
+  label:     <span class="token-type">string</span>;   <span class="token-cmt">// custom crew name</span>
+  joinedAt:  <span class="token-type">string</span>;   <span class="token-cmt">// ISO timestamp</span>
+  isCreator: <span class="token-type">boolean</span>;
+}
+
+<span class="token-key">export interface</span> BuddyProfile {
+  alias:    <span class="token-type">string</span>;   <span class="token-cmt">// display name (max 32 chars)</span>
+  initials: <span class="token-type">string</span>;   <span class="token-cmt">// initials (max 2 chars)</span>
+  color:    <span class="token-type">string</span>;   <span class="token-cmt">// OKLCH hue string</span>
+  lastSeen: <span class="token-type">string</span>;   <span class="token-cmt">// ISO timestamp</span>
+}
+
+<span class="token-key">export interface</span> BuddyPeer {
+  pubkey:   <span class="token-type">string</span>;
+  profile:  BuddyProfile;
+  logs:     WorkoutLog[];
+}</code></pre>
+
+  <h3>Key Code Sketch — nostr.ts</h3>
+<pre><code><span class="token-key">import</span> { SimplePool } <span class="token-op">from</span> <span class="token-str">"nostr-tools/pool"</span>;
+
+<span class="token-key">export const</span> RELAYS = [
+  <span class="token-str">"wss://relay.damus.io"</span>,
+  <span class="token-str">"wss://relay.nostr.band"</span>,
+  <span class="token-str">"wss://nos.lol"</span>,
+  <span class="token-str">"wss://nostr.wine"</span>,
+  <span class="token-str">"wss://relay.snort.social"</span>,
+];
+
+<span class="token-key">let</span> _pool: SimplePool | <span class="token-type">null</span> = <span class="token-type">null</span>;
+<span class="token-key">export const</span> getPool = () => _pool ??= <span class="token-op">new</span> SimplePool();</code></pre>
+
+  <h3>Key Code Sketch — buddy-publish.ts</h3>
+<pre><code><span class="token-key">import</span> { finalizeEvent } <span class="token-op">from</span> <span class="token-str">"nostr-tools/pure"</span>;
+<span class="token-key">import</span> { RELAYS, getPool } <span class="token-op">from</span> <span class="token-str">"./nostr"</span>;
+
+<span class="token-key">export async function</span> publishWorkoutLog(
+  log: WorkoutLog, roomHash: <span class="token-type">string</span>, identity: BuddyIdentity
+) {
+  <span class="token-key">const</span> event = finalizeEvent({
+    kind:       <span class="token-num">31337</span>,
+    created_at: Math.floor(Date.now() / <span class="token-num">1000</span>),
+    tags:       [[<span class="token-str">"d"</span>, log.id], [<span class="token-str">"r"</span>, roomHash], [<span class="token-str">"t"</span>, <span class="token-str">"fitnesspal"</span>]],
+    content:    JSON.stringify(log),
+  }, hexToBytes(identity.privkey));
+  <span class="token-key">await</span> Promise.allSettled(getPool().publish(RELAYS, event));
+}</code></pre>
+
+  <h3>Key Code Sketch — buddy-store.ts</h3>
+<pre><code><span class="token-key">import</span> { createStore, isObj, str, arr } <span class="token-op">from</span> <span class="token-str">"./storage"</span>;
+<span class="token-key">import type</span> { BuddyIdentity, BuddyRoom } <span class="token-op">from</span> <span class="token-str">"@/types"</span>;
+
+<span class="token-key">const</span> validateIdentity = (raw: <span class="token-type">unknown</span>): BuddyIdentity | <span class="token-type">null</span> => {
+  <span class="token-key">if</span> (!isObj(raw)) <span class="token-key">return</span> <span class="token-type">null</span>;
+  <span class="token-key">return</span> {
+    privkey:  str(raw.privkey),
+    pubkey:   str(raw.pubkey),
+    alias:    str(raw.alias),
+    initials: str(raw.initials),
+    color:    str(raw.color),
+  };
+};
+
+<span class="token-key">export const</span> identityStore = createStore&lt;BuddyIdentity | <span class="token-type">null</span>&gt;(
+  <span class="token-str">"fp.buddy.identity"</span>, <span class="token-type">null</span>, validateIdentity
+);
+
+<span class="token-key">const</span> isRoom = (v: <span class="token-type">unknown</span>): v is BuddyRoom => {
+  <span class="token-key">if</span> (!isObj(v)) <span class="token-key">return false</span>;
+  <span class="token-key">return typeof</span> v.id === <span class="token-str">"string"</span> &amp;&amp; <span class="token-key">typeof</span> v.code === <span class="token-str">"string"</span>;
+};
+
+<span class="token-key">export const</span> roomsStore = createStore&lt;BuddyRoom[]&gt;(
+  <span class="token-str">"fp.buddy.rooms"</span>, [], (raw) => arr&lt;BuddyRoom&gt;(raw, isRoom)
+);
+
+<span class="token-key">export const</span> lastFetchStore = createStore&lt;Record&lt;<span class="token-type">string</span>, <span class="token-type">number</span>&gt;&gt;(
+  <span class="token-str">"fp.buddy.lastFetch"</span>, {}, (raw) => {
+    <span class="token-key">if</span> (!isObj(raw)) <span class="token-key">return</span> {};
+    <span class="token-key">const</span> res: Record&lt;<span class="token-type">string</span>, <span class="token-type">number</span>&gt; = {};
+    <span class="token-key">for</span> (<span class="token-key">const</span> [k, v] <span class="token-op">of</span> Object.entries(raw)) {
+      <span class="token-key">if</span> (<span class="token-key">typeof</span> v === <span class="token-str">"number"</span>) res[k] = v;
+    }
+    <span class="token-key">return</span> res;
+  }
+);</code></pre>
+
+  <h3>Key Code Sketch — buddy-subscribe.ts</h3>
+<pre><code><span class="token-key">import</span> { verifyEvent } <span class="token-op">from</span> <span class="token-str">"nostr-tools/pure"</span>;
+<span class="token-key">import type</span> { Event } <span class="token-op">from</span> <span class="token-str">"nostr-tools/pure"</span>;
+<span class="token-key">import type</span> { WorkoutLog, BuddyProfile } <span class="token-op">from</span> <span class="token-str">"@/types"</span>;
+
+<span class="token-key">export function</span> handleIncomingEvent(
+  event: Event,
+  onLog: (pubkey: <span class="token-type">string</span>, log: WorkoutLog) => <span class="token-type">void</span>,
+  onProfile: (pubkey: <span class="token-type">string</span>, profile: BuddyProfile) => <span class="token-type">void</span>
+) {
+  <span class="token-key">if</span> (!verifyEvent(event)) {
+    console.warn(<span class="token-str">"Invalid signature:"</span>, event.id);
+    <span class="token-key">return</span>;
+  }
+
+  <span class="token-key">try</span> {
+    <span class="token-key">if</span> (event.kind === <span class="token-num">31337</span>) {
+      <span class="token-key">const</span> log = JSON.parse(event.content) <span class="token-key">as</span> WorkoutLog;
+      <span class="token-key">if</span> (log &amp;&amp; <span class="token-key">typeof</span> log.id === <span class="token-str">"string"</span>) {
+        onLog(event.pubkey, log);
+      }
+    } <span class="token-key">else if</span> (event.kind === <span class="token-num">31338</span>) {
+      <span class="token-key">const</span> profile = JSON.parse(event.content) <span class="token-key">as</span> BuddyProfile;
+      <span class="token-key">if</span> (profile &amp;&amp; <span class="token-key">typeof</span> profile.alias === <span class="token-str">"string"</span>) {
+        onProfile(event.pubkey, profile);
+      }
+    }
+  } <span class="token-key">catch</span> (err) {
+    console.error(<span class="token-str">"Failed to parse event:"</span>, err);
+  }
+}</code></pre>
+
+  <h3>Key Code Sketch — buddy-metrics.ts</h3>
+<pre><code><span class="token-key">import type</span> { WorkoutLog } <span class="token-op">from</span> <span class="token-str">"@/types"</span>;
+
+<span class="token-key">export function</span> getWeeklyCount(logs: WorkoutLog[]): <span class="token-type">number</span> {
+  <span class="token-key">const</span> now = <span class="token-op">new</span> Date();
+  <span class="token-key">const</span> startOfWeek = <span class="token-op">new</span> Date(now.setDate(now.getDate() - now.getDay() + <span class="token-num">1</span>));
+  startOfWeek.setHours(<span class="token-num">0</span>,<span class="token-num">0</span>,<span class="token-num">0</span>,<span class="token-num">0</span>);
+  <span class="token-key">return</span> logs.filter(l => l.status === <span class="token-str">"completed"</span> &amp;&amp; <span class="token-op">new</span> Date(l.date) >= startOfWeek).length;
+}
+
+<span class="token-key">export function</span> getStreak(logs: WorkoutLog[]): <span class="token-type">number</span> {
+  <span class="token-key">const</span> dates = Array.from(<span class="token-op">new</span> Set(
+    logs.filter(l => l.status === <span class="token-str">"completed"</span>)
+        .map(l => <span class="token-op">new</span> Date(l.date).toDateString())
+  )).map(d => <span class="token-op">new</span> Date(d)).sort((a,b) => b.getTime() - a.getTime());
+
+  <span class="token-key">if</span> (dates.length === <span class="token-num">0</span>) <span class="token-key">return</span> <span class="token-num">0</span>;
+  <span class="token-key">const</span> today = <span class="token-op">new</span> Date(); today.setHours(<span class="token-num">0</span>,<span class="token-num">0</span>,<span class="token-num">0</span>,<span class="token-num">0</span>);
+  <span class="token-key">if</span> ((today.getTime() - dates[<span class="token-num">0</span>].getTime()) / <span class="token-num">86400000</span> > <span class="token-num">1</span>) <span class="token-key">return</span> <span class="token-num">0</span>;
+
+  <span class="token-key">let</span> streak = <span class="token-num">1</span>;
+  <span class="token-key">for</span> (<span class="token-key">let</span> i = <span class="token-num">0</span>; i &lt; dates.length - <span class="token-num">1</span>; i++) {
+    <span class="token-key">const</span> diff = (dates[i].getTime() - dates[i+<span class="token-num">1</span>].getTime()) / <span class="token-num">86400000</span>;
+    <span class="token-key">if</span> (diff &lt;= <span class="token-num">1.1</span>) streak++; <span class="token-key">else break</span>;
+  }
+  <span class="token-key">return</span> streak;
+}
+
+<span class="token-key">export function</span> getConsistencyPct(logs: WorkoutLog[]): <span class="token-type">number</span> {
+  <span class="token-key">const</span> uniqueDays = <span class="token-op">new</span> Set(logs.filter(l => l.status === <span class="token-str">"completed"</span>).map(l => <span class="token-op">new</span> Date(l.date).toDateString()));
+  <span class="token-key">return</span> Math.min(<span class="token-num">100</span>, Math.round((uniqueDays.size / <span class="token-num">30</span>) * <span class="token-num">100</span>));
+}</code></pre>
+
+  <h3>Key Code Sketch — useBuddyIdentity.ts</h3>
+<pre><code><span class="token-key">import</span> { useEffect } <span class="token-op">from</span> <span class="token-str">"react"</span>;
+<span class="token-key">import</span> { generateSecretKey, getPublicKey } <span class="token-op">from</span> <span class="token-str">"nostr-tools/pure"</span>;
+<span class="token-key">import</span> { useStore } <span class="token-op">from</span> <span class="token-str">"./useStore"</span>;
+<span class="token-key">import</span> { identityStore } <span class="token-op">from</span> <span class="token-str">"@/lib/buddy-store"</span>;
+<span class="token-key">import</span> { userStore } <span class="token-op">from</span> <span class="token-str">"@/lib/stores"</span>;
+
+<span class="token-key">export function</span> useBuddyIdentity() {
+  <span class="token-key">const</span> [identity, setIdentity] = useStore(identityStore);
+  <span class="token-key">const</span> [user] = useStore(userStore);
+
+  useEffect(() => {
+    <span class="token-key">if</span> (identity) <span class="token-key">return</span>;
+    <span class="token-key">const</span> secret = generateSecretKey();
+    <span class="token-key">const</span> privkey = Array.from(secret).map(b => b.toString(<span class="token-num">16</span>).padStart(<span class="token-num">2</span>, <span class="token-str">"0"</span>)).join(<span class="token-str">""</span>);
+    <span class="token-key">const</span> pubkey = getPublicKey(secret);
+    
+    <span class="token-key">const</span> alias = user.name || <span class="token-str">"Athlete"</span>;
+    <span class="token-key">const</span> initials = alias.split(<span class="token-str">" "</span>).map(n => n[<span class="token-num">0</span>]).join(<span class="token-str">""</span>).slice(<span class="token-num">0</span>, <span class="token-num">2</span>).toUpperCase();
+    
+    <span class="token-key">let</span> hash = <span class="token-num">0</span>;
+    <span class="token-key">for</span> (<span class="token-key">let</span> i = <span class="token-num">0</span>; i &lt; pubkey.length; i++) hash = pubkey.charCodeAt(i) + ((hash &lt;&lt; <span class="token-num">5</span>) - hash);
+    <span class="token-key">const</span> color = <span class="token-str">`</span><span class="token-op">${</span>Math.abs(hash % <span class="token-num">360</span>)<span class="token-op">}</span><span class="token-str">`</span>;
+
+    setIdentity({ privkey, pubkey, alias, initials, color });
+  }, [identity, user.name, setIdentity]);
+
+  <span class="token-key">return</span> identity;
+}</code></pre>
+
+  <h3>Key Code Sketch — useBuddyRooms.ts</h3>
+<pre><code><span class="token-key">import</span> { useCallback } <span class="token-op">from</span> <span class="token-str">"react"</span>;
+<span class="token-key">import</span> { useStore } <span class="token-op">from</span> <span class="token-str">"./useStore"</span>;
+<span class="token-key">import</span> { roomsStore } <span class="token-op">from</span> <span class="token-str">"@/lib/buddy-store"</span>;
+<span class="token-key">import type</span> { BuddyRoom } <span class="token-op">from</span> <span class="token-str">"@/types"</span>;
+
+<span class="token-key">export async function</span> hashRoomCode(code: <span class="token-type">string</span>): Promise&lt;<span class="token-type">string</span>&gt; {
+  <span class="token-key">const</span> msgBuffer = <span class="token-op">new</span> TextEncoder().encode(code.toUpperCase().trim());
+  <span class="token-key">const</span> hashBuffer = <span class="token-key">await</span> crypto.subtle.digest(<span class="token-str">"SHA-256"</span>, msgBuffer);
+  <span class="token-key">return</span> Array.from(<span class="token-op">new</span> Uint8Array(hashBuffer))
+              .map(b => b.toString(<span class="token-num">16</span>).padStart(<span class="token-num">2</span>, <span class="token-str">"0"</span>)).join(<span class="token-str">""</span>).slice(<span class="token-num">0</span>, <span class="token-num">24</span>);
+}
+
+<span class="token-key">export function</span> useBuddyRooms() {
+  <span class="token-key">const</span> [rooms, setRooms] = useStore(roomsStore);
+
+  <span class="token-key">const</span> createRoom = useCallback(<span class="token-key">async</span> (label: <span class="token-type">string</span>) => {
+    <span class="token-key">const</span> array = <span class="token-op">new</span> Uint8Array(<span class="token-num">4</span>);
+    crypto.getRandomValues(array);
+    <span class="token-key">const</span> code = Array.from(array).map(b => b.toString(<span class="token-num">36</span>).padStart(<span class="token-num">2</span>, <span class="token-str">"0"</span>)).join(<span class="token-str">""</span>).slice(<span class="token-num">0</span>, <span class="token-num">8</span>).toUpperCase();
+    <span class="token-key">const</span> id = <span class="token-key">await</span> hashRoomCode(code);
+    <span class="token-key">const</span> room: BuddyRoom = { id, code, label: label.trim() || <span class="token-str">"Gym Crew"</span>, joinedAt: <span class="token-op">new</span> Date().toISOString(), isCreator: <span class="token-key">true</span> };
+    setRooms(prev => [...prev.filter(r => r.id !== id), room]);
+    <span class="token-key">return</span> room;
+  }, [setRooms]);
+
+  <span class="token-key">const</span> joinRoom = useCallback(<span class="token-key">async</span> (code: <span class="token-type">string</span>, label?: <span class="token-type">string</span>) => {
+    <span class="token-key">const</span> id = <span class="token-key">await</span> hashRoomCode(code);
+    <span class="token-key">const</span> room: BuddyRoom = { id, code: code.toUpperCase().trim(), label: label?.trim() || <span class="token-str">"Gym Crew"</span>, joinedAt: <span class="token-op">new</span> Date().toISOString(), isCreator: <span class="token-key">false</span> };
+    setRooms(prev => [...prev.filter(r => r.id !== id), room]);
+    <span class="token-key">return</span> room;
+  }, [setRooms]);
+
+  <span class="token-key">const</span> leaveRoom = useCallback((id: <span class="token-type">string</span>) => {
+    setRooms(prev => prev.filter(r => r.id !== id));
+  }, [setRooms]);
+
+  <span class="token-key">return</span> { rooms, createRoom, joinRoom, leaveRoom };
+}</code></pre>
+
+  <h3>Key Code Sketch — useBuddySync.ts</h3>
+<pre><code><span class="token-key">import</span> { useEffect, useState } <span class="token-op">from</span> <span class="token-str">"react"</span>;
+<span class="token-key">import</span> { getPool, RELAYS } <span class="token-op">from</span> <span class="token-str">"@/lib/nostr"</span>;
+<span class="token-key">import</span> { handleIncomingEvent } <span class="token-op">from</span> <span class="token-str">"@/lib/buddy-subscribe"</span>;
+<span class="token-key">import</span> { useStore } <span class="token-op">from</span> <span class="token-str">"./useStore"</span>;
+<span class="token-key">import</span> { roomsStore, lastFetchStore } <span class="token-op">from</span> <span class="token-str">"@/lib/buddy-store"</span>;
+<span class="token-key">import type</span> { BuddyProfile, WorkoutLog } <span class="token-op">from</span> <span class="token-str">"@/types"</span>;
+
+<span class="token-key">export function</span> useBuddySync() {
+  <span class="token-key">const</span> [rooms] = useStore(roomsStore);
+  <span class="token-key">const</span> [lastFetch, setLastFetch] = useStore(lastFetchStore);
+  <span class="token-key">const</span> [profiles, setProfiles] = useState&lt;Record&lt;<span class="token-type">string</span>, BuddyProfile&gt;&gt;({});
+  <span class="token-key">const</span> [logs, setLogs] = useState&lt;Record&lt;<span class="token-type">string</span>, WorkoutLog[]&gt;&gt;({});
+  <span class="token-key">const</span> [loading, setLoading] = useState(<span class="token-type">true</span>);
+
+  useEffect(() => {
+    <span class="token-key">if</span> (rooms.length === <span class="token-num">0</span>) { setLoading(<span class="token-type">false</span>); <span class="token-key">return</span>; }
+
+    <span class="token-key">const</span> roomIds = rooms.map(r => r.id);
+    <span class="token-key">const</span> minSince = Math.min(...roomIds.map(id => lastFetch[id] || <span class="token-num">0</span>));
+    <span class="token-key">const</span> since = Math.max(<span class="token-num">0</span>, minSince - <span class="token-num">60</span>);
+
+    <span class="token-key">const</span> sub = getPool().subscribeMany(RELAYS, [{
+      kinds: [<span class="token-num">31337</span>, <span class="token-num">31338</span>],
+      <span class="token-str">"#r"</span>: roomIds,
+      since
+    }], {
+      onevent(event) {
+        handleIncomingEvent(event,
+          (pubkey, log) => setLogs(prev => {
+            <span class="token-key">const</span> userLogs = prev[pubkey] || [];
+            <span class="token-key">if</span> (userLogs.some(l => l.id === log.id)) <span class="token-key">return</span> prev;
+            <span class="token-key">return</span> { ...prev, [pubkey]: [...userLogs, log].sort((a,b) => b.date.localeCompare(a.date)) };
+          }),
+          (pubkey, profile) => setProfiles(prev => {
+            <span class="token-key">const</span> ext = prev[pubkey];
+            <span class="token-key">if</span> (ext &amp;&amp; ext.lastSeen >= profile.lastSeen) <span class="token-key">return</span> prev;
+            <span class="token-key">return</span> { ...prev, [pubkey]: profile };
+          })
+        );
+      },
+      oneose() {
+        setLoading(<span class="token-type">false</span>);
+        <span class="token-key">const</span> now = Math.floor(Date.now() / <span class="token-num">1000</span>);
+        setLastFetch(prev => {
+          <span class="token-key">const</span> next = { ...prev };
+          roomIds.forEach(id => next[id] = now);
+          <span class="token-key">return</span> next;
+        });
+      }
+    });
+
+    <span class="token-key">return</span> () => sub.close();
+  }, [rooms, lastFetch, setLastFetch]);
+
+  <span class="token-key">return</span> { profiles, logs, loading };
+}</code></pre>
+
+  <h3>Key Code Sketch — useSyncEmitter.ts</h3>
+<pre><code><span class="token-key">import</span> { useCallback, useEffect } <span class="token-op">from</span> <span class="token-str">"react"</span>;
+<span class="token-key">import</span> { finalizeEvent } <span class="token-op">from</span> <span class="token-str">"nostr-tools/pure"</span>;
+<span class="token-key">import</span> { getPool, RELAYS } <span class="token-op">from</span> <span class="token-str">"@/lib/nostr"</span>;
+<span class="token-key">import</span> { useBuddyIdentity } <span class="token-op">from</span> <span class="token-str">"./useBuddyIdentity"</span>;
+<span class="token-key">import</span> { useStore } <span class="token-op">from</span> <span class="token-str">"./useStore"</span>;
+<span class="token-key">import</span> { roomsStore } <span class="token-op">from</span> <span class="token-str">"@/lib/buddy-store"</span>;
+<span class="token-key">import</span> { historyStore } <span class="token-op">from</span> <span class="token-str">"@/lib/stores"</span>;
+<span class="token-key">import type</span> { BuddyProfile } <span class="token-op">from</span> <span class="token-str">"@/types"</span>;
+
+<span class="token-key">export function</span> useSyncEmitter() {
+  <span class="token-key">const</span> identity = useBuddyIdentity();
+  <span class="token-key">const</span> [rooms] = useStore(roomsStore);
+  <span class="token-key">const</span> [history] = useStore(historyStore);
+
+  <span class="token-key">const</span> pushSync = useCallback(<span class="token-key">async</span> () => {
+    <span class="token-key">if</span> (!identity || rooms.length === <span class="token-num">0</span>) <span class="token-key">return</span>;
+
+    <span class="token-key">const</span> hexToBytes = (hex: <span class="token-type">string</span>) => {
+      <span class="token-key">const</span> bytes = <span class="token-op">new</span> Uint8Array(hex.length / <span class="token-num">2</span>);
+      <span class="token-key">for</span> (<span class="token-key">let</span> i = <span class="token-num">0</span>; i &lt; bytes.length; i++) bytes[i] = parseInt(hex.substring(i*<span class="token-num">2</span>, i*<span class="token-num">2</span>+<span class="token-num">2</span>), <span class="token-num">16</span>);
+      <span class="token-key">return</span> bytes;
+    };
+    <span class="token-key">const</span> privateKeyBytes = hexToBytes(identity.privkey);
+    <span class="token-key">const</span> nowSec = Math.floor(Date.now() / <span class="token-num">1000</span>);
+    <span class="token-key">const</span> profile: BuddyProfile = { alias: identity.alias, initials: identity.initials, color: identity.color, lastSeen: <span class="token-op">new</span> Date().toISOString() };
+    
+    <span class="token-key">const</span> thirtyDaysAgo = <span class="token-op">new</span> Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - <span class="token-num">30</span>);
+    <span class="token-key">const</span> pushLogs = history.filter(l => l.status === <span class="token-str">"completed"</span> &amp;&amp; <span class="token-op">new</span> Date(l.date) >= thirtyDaysAgo);
+
+    <span class="token-key">for</span> (<span class="token-key">const</span> room <span class="token-op">of</span> rooms) {
+      <span class="token-key">const</span> profEv = finalizeEvent({
+        kind:       <span class="token-num">31338</span>,
+        created_at: nowSec,
+        tags:       [[<span class="token-str">"d"</span>, <span class="token-str">"profile"</span>], [<span class="token-str">"r"</span>, room.id], [<span class="token-str">"t"</span>, <span class="token-str">"fitnesspal"</span>]],
+        content:    JSON.stringify(profile),
+      }, privateKeyBytes);
+      getPool().publish(RELAYS, profEv);
+
+      <span class="token-key">for</span> (<span class="token-key">const</span> log <span class="token-op">of</span> pushLogs) {
+        <span class="token-key">const</span> logEv = finalizeEvent({
+          kind:       <span class="token-num">31337</span>,
+          created_at: Math.floor(<span class="token-op">new</span> Date(log.date).getTime() / <span class="token-num">1000</span>),
+          tags:       [[<span class="token-str">"d"</span>, log.id], [<span class="token-str">"r"</span>, room.id], [<span class="token-str">"t"</span>, <span class="token-str">"fitnesspal"</span>]],
+          content:    JSON.stringify(log),
+        }, privateKeyBytes);
+        getPool().publish(RELAYS, logEv);
+      }
+    }
+  }, [identity, rooms, history]);
+
+  useEffect(() => {
+    pushSync();
+    <span class="token-key">const</span> interval = setInterval(pushSync, <span class="token-num">300000</span>);
+    <span class="token-key">const</span> onVisible = () => document.visibilityState === <span class="token-str">"visible"</span> &amp;&amp; pushSync();
+    document.addEventListener(<span class="token-str">"visibilitychange"</span>, onVisible);
+    <span class="token-key">return</span> () => { clearInterval(interval); document.removeEventListener(<span class="token-str">"visibilitychange"</span>, onVisible); };
+  }, [pushSync]);
+
+  <span class="token-key">return</span> pushSync;
+}</code></pre>
+</section>
+
+
+<!-- ═══════════ S9: PHASES ═══════════ -->
+<section id="s9">
+  <div class="section-num">Section 09</div>
+  <h2 class="section-title">Implementation Phases</h2>
+
+  <div class="phases">
+
+    <div class="phase">
+      <div class="phase-track">
+        <div class="phase-dot">1</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-body">
+        <h3>Foundation — Nostr Identity &amp; Transport</h3>
+        <p>Wire <code>nostr-tools</code>, generate keypair, verify relay connections. No UI yet.</p>
+        <ul class="task-list">
+          <li><code>npm install nostr-tools</code>, add any needed TS types</li>
+          <li>Create <code>src/lib/nostr.ts</code>: SimplePool singleton + RELAYS array</li>
+          <li>Add <code>BuddyIdentity</code>, <code>BuddyRoom</code>, <code>BuddyProfile</code>, <code>BuddyPeer</code> to types</li>
+          <li>Create <code>src/lib/buddy-store.ts</code>: identityStore + roomsStore + lastFetchStore</li>
+          <li>Create <code>useBuddyIdentity</code> hook: lazy keygen on first call, persist to store</li>
+          <li>Console test: publish a test event, subscribe and verify it returns from relay</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-track">
+        <div class="phase-dot">2</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-body">
+        <h3>Sync Engine — Publish &amp; Subscribe</h3>
+        <p>Implement event publication, subscription, verification, and the timed emitter.</p>
+        <ul class="task-list">
+          <li>Create <code>src/lib/buddy-publish.ts</code>: <code>publishProfile()</code>, <code>publishWorkoutLog()</code></li>
+          <li>Create <code>src/lib/buddy-subscribe.ts</code>: <code>subscribeRoom()</code> with verifyEvent() guard, parse profile/log events</li>
+          <li>Create <code>src/lib/buddy-metrics.ts</code>: 7 pure metric functions, no side effects</li>
+          <li>Create <code>useBuddySync</code> hook: manage subscriptions, return <code>peers</code> + <code>logs</code> maps</li>
+          <li>Create <code>useSyncEmitter</code> hook: interval + visibility push trigger</li>
+          <li>Wire emitter to fire after <code>useHistory.log()</code> (immediate push on new workout)</li>
+          <li>Validate async flow: complete a workout, reload app, open buddy on another device → log appears</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-track">
+        <div class="phase-dot">3</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-body">
+        <h3>Buddy Tab UI — Lobby, Create, Join</h3>
+        <p>Full tab, invite code flow, room management. First user-visible feature.</p>
+        <ul class="task-list">
+          <li>Build <code>Avatar</code> atom: initials circle, oklch hue from prop, size variants</li>
+          <li>Build <code>AvatarStack</code> molecule: overlapping, +N overflow</li>
+          <li>Build <code>InviteCodeInput</code> molecule: segmented 8-char input, auto-focus next segment</li>
+          <li>Build <code>BuddyLobby</code>, <code>BuddyCreator</code>, <code>BuddyJoiner</code> organisms</li>
+          <li>Build <code>BuddyTab</code> page: phase machine connecting all screens</li>
+          <li>Update <code>App.tsx</code>: insert "buddy" tab at position 2, update <code>TabId</code> type and TAB_IDS array</li>
+          <li>Add tab badge: dot when buddy activity newer than <code>fp.buddy.lastVisit</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-track">
+        <div class="phase-dot">4</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-body">
+        <h3>Buddy Room List &amp; Detail</h3>
+        <p>Crew overview with leaderboard and per-buddy detail sheet.</p>
+        <ul class="task-list">
+          <li>Build <code>BuddyCard</code> molecule: online dot, streak + session counts, tap target</li>
+          <li>Build <code>Leaderboard</code> molecule: gold/silver/bronze podium + ranked list</li>
+          <li>Build <code>BuddyRoomList</code> organism: room label + BuddyCard list + "Invite Another" CTA</li>
+          <li>Build <code>BuddyDetail</code> organism: head-to-head table, radar overlay, recent log list</li>
+          <li>Handle loading / empty / offline states gracefully throughout</li>
+          <li>Room management actions: rename, copy code again, leave room (with confirmation)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-track">
+        <div class="phase-dot">5</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-body">
+        <h3>Analysis Tab Integration</h3>
+        <p>Crew comparison charts in Insights. Extend RadarChart for multiple series.</p>
+        <ul class="task-list">
+          <li>Extend <code>RadarChart</code>: <code>series</code> prop replaces single <code>data</code> prop; each series has label, data, color</li>
+          <li>Build <code>CrewBarChart</code> organism: grouped weekly columns, legend, handles up to 5 users</li>
+          <li>Build <code>ConsistencyBars</code> molecule: horizontal % bars, sorted descending</li>
+          <li>Update <code>AnalyticsDashboard</code>: add "vs. Crew" section, shown only when <code>buddyPeers.length &gt; 0</code></li>
+          <li>Update <code>AnalysisTab</code>: consume <code>useBuddySync</code>, pass peers down</li>
+          <li>Visual QA at 390px with 2–3 synthetic peer datasets</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════ S10: SECURITY ═══════════ -->
+<section id="s10">
+  <div class="section-num">Section 10</div>
+  <h2 class="section-title">Security &amp; Privacy</h2>
+
+  <table>
+    <thead><tr><th>Risk</th><th>Mitigation</th><th>Rating</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Stranger discovers room by guessing invite code</td>
+        <td>8-char base36 = ~2.8 trillion combinations. Brute-force via relay would require millions of subscriptions — easily detectable / rate-limited by any reasonable relay operator. If joined: sees alias, workout dates, muscle groups, style. No sensitive data.</td>
+        <td><span class="yes-mark">Low risk</span></td>
+      </tr>
+      <tr>
+        <td>Event tampering / impersonation</td>
+        <td><code>verifyEvent()</code> from nostr-tools checks the secp256k1 signature on every incoming event. Events with invalid sigs are silently dropped before reaching app state. A relay cannot forge events it relays.</td>
+        <td><span class="yes-mark">Safe</span></td>
+      </tr>
+      <tr>
+        <td>Private key exposure</td>
+        <td><code>privkey</code> is in <code>fp.buddy.identity</code> (localStorage). It's read only in <code>buddy-publish.ts</code> to call <code>finalizeEvent()</code> — never logged, never included in published content, never sent to a relay directly.</td>
+        <td><span class="yes-mark">Safe</span></td>
+      </tr>
+      <tr>
+        <td>API key leakage via Nostr</td>
+        <td>OpenRouter API key lives in <code>fp.ai</code>. Buddy sync code (<code>buddy-publish.ts</code>, <code>buddy-subscribe.ts</code>) never imports from <code>fp.ai</code>. Enforced by SRP module boundaries.</td>
+        <td><span class="yes-mark">Safe</span></td>
+      </tr>
+      <tr>
+        <td>XSS via buddy-supplied content</td>
+        <td>All buddy-supplied strings (alias, initials) are rendered as text nodes, never as <code>innerHTML</code>. Alias capped at 32 chars; initials capped at 2 chars. WorkoutLog fields are typed enums — not free text — so injection surface is minimal.</td>
+        <td><span class="yes-mark">Mitigated</span></td>
+      </tr>
+      <tr>
+        <td>Relay data permanence</td>
+        <td>Nostr relays store events, but most major relays prune old events after 30–90 days. Parameterized replaceable events (kind 31337/31338) that aren't re-published expire naturally. Users can "delete" by publishing a NIP-09 deletion event (optional enhancement).</td>
+        <td><span class="yes-mark">Acceptable</span></td>
+      </tr>
+      <tr>
+        <td>Relay outage</td>
+        <td>5 relays configured; <code>Promise.allSettled()</code> on publish means partial success is fine. Subscription via <code>SimplePool.subscribeMany</code> reads from all — whichever relays respond. App remains fully functional offline; sync catches up on reconnect.</td>
+        <td><span class="yes-mark">Resilient</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout danger">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <p><strong>Disclosure to users:</strong> Workout metadata (dates, muscle groups, style, duration) published to Nostr relays is accessible to anyone who knows the room hash. The invite code is the only access barrier. Show a brief "Your crew data is public to anyone with this code" notice when creating the first room. One sentence, not a modal wall.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ S11: OPEN QUESTIONS ═══════════ -->
+<section id="s11">
+  <div class="section-num">Section 11</div>
+  <h2 class="section-title">Open Questions</h2>
+
+  <table>
+    <thead><tr><th>#</th><th>Question</th><th>Default / recommendation</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Multiple rooms per user (e.g. "Work Crew" + "Family Crew")?</td>
+        <td><strong>Yes</strong> — <code>BuddyRoom[]</code> in store supports it natively. Rooms shown as tabs or a list inside the Buddy tab.</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Should the identity alias auto-update when the user renames themselves in Settings?</td>
+        <td><strong>Yes</strong> — on Settings save, <code>useSyncEmitter</code> pushes a fresh kind 31338 profile event with the new alias.</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>What happens if the user clears localStorage (keypair lost)?</td>
+        <td>A new keypair generates — they appear as a new person in the room. Consider a Settings entry "Export / back up your buddy key" for recovery. Existing events under old pubkey stay on relays but are unclaimable.</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Should the "vs. Crew" radar in Analysis merge all rooms or filter by active room?</td>
+        <td><strong>Merge all rooms</strong>, deduplicated by pubkey. Same person in two rooms appears once, their logs merged.</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Do we need NIP-09 deletion support (let users revoke published data)?</td>
+        <td><strong>Post-MVP</strong> — low priority. Relays prune data naturally. Add if users request it.</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Should we use Nostr kind 0 (standard profile) instead of our custom kind 31338?</td>
+        <td><strong>No</strong> — kind 0 is a global Nostr identity. We don't want to write to users' global Nostr profiles. Room-scoped kind 31338 keeps FitnessPal data self-contained.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<hr />
+<p style="text-align:center; color: var(--ink-3); font-size: 13px;">
+  FitnessPal Buddy P2P — Plan v2.0 · 2026-06-25 · Nostr Protocol · nostr-tools v2 · Fully client-side
+</p>
+
+</body>
+</html>

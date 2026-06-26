@@ -1,0 +1,12 @@
+.sgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+@media (min-width: 380px) {
+  .sgrid {
+    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  }
+}

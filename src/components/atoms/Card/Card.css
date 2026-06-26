@@ -1,0 +1,26 @@
+.card {
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+.card--flat {
+  border: 1px solid var(--line);
+}
+
+.card--raised {
+  background: var(--surface-2);
+  box-shadow: var(--shadow-1);
+}
+
+.card--pad-none {
+  padding: 0;
+}
+.card--pad-sm {
+  padding: var(--s-3);
+}
+.card--pad-md {
+  padding: var(--s-4);
+}
+.card--pad-lg {
+  padding: var(--s-5);
+}

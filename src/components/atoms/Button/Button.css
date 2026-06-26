@@ -1,0 +1,109 @@
+.btn {
+  --btn-bg: transparent;
+  --btn-ink: var(--ink);
+  --btn-border: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  border-radius: 30px;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* sizes */
+.btn--sm {
+  height: 36px;
+  padding-inline: var(--s-3);
+  font-size: var(--text-sm);
+}
+.btn--md {
+  height: 44px;
+  padding-inline: var(--s-4);
+  font-size: var(--text-base);
+}
+.btn--lg {
+  height: 54px;
+  padding-inline: var(--s-5);
+  font-size: var(--text-md);
+}
+.btn--full {
+  width: 100%;
+}
+.btn--icon-only {
+  aspect-ratio: 1;
+  padding-inline: 0;
+}
+
+/* variants */
+.btn--primary {
+  --btn-bg: var(--primary);
+  --btn-ink: var(--primary-ink);
+}
+.btn--primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn--accent {
+  --btn-bg: var(--accent);
+  --btn-ink: var(--accent-ink);
+}
+.btn--accent:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.btn--secondary {
+  --btn-bg: var(--surface-2);
+  --btn-ink: var(--ink);
+  --btn-border: var(--line);
+}
+.btn--secondary:hover:not(:disabled) {
+  --btn-bg: var(--surface-hover);
+}
+
+.btn--ghost {
+  --btn-ink: var(--ink-muted);
+}
+.btn--ghost:hover:not(:disabled) {
+  --btn-bg: var(--surface-2);
+  --btn-ink: var(--ink);
+}
+
+.btn--danger {
+  --btn-bg: var(--danger-soft);
+  --btn-ink: var(--danger);
+  --btn-border: color-mix(in oklch, var(--danger) 30%, transparent);
+}
+.btn--danger:hover:not(:disabled) {
+  --btn-bg: color-mix(in oklch, var(--danger) 18%, transparent);
+}
+
+.btn__spinner {
+  animation: btn-spin 0.7s linear infinite;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
