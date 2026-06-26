@@ -148,7 +148,7 @@ export function WorkoutResult({
                 onClick={() => onSaveAndStart?.(saveName.trim() || workout.name)}
                 disabled={!saveName.trim()}
               >
-                Save &amp; Start
+                Save and go
               </Button>
               <Button variant="ghost" size="sm" onClick={() => setShowSavePanel(false)}>
                 Cancel
@@ -157,29 +157,31 @@ export function WorkoutResult({
           </div>
         ) : (
           <>
-            {onSaveAndStart && (
+            <div className={onSaveAndStart ? "result__actions-row" : undefined}>
+              {onSaveAndStart && (
+                <Button
+                  variant="accent"
+                  size="md"
+                  iconLeft="BookmarkCheck"
+                  fullWidth
+                  onClick={() => {
+                    setSaveName(workout.name);
+                    setShowSavePanel(true);
+                  }}
+                >
+                  Save and go
+                </Button>
+              )}
               <Button
-                variant="accent"
+                variant={onSaveAndStart ? "secondary" : "accent"}
                 size="md"
-                iconLeft="BookmarkCheck"
+                iconLeft="Play"
                 fullWidth
-                onClick={() => {
-                  setSaveName(workout.name);
-                  setShowSavePanel(true);
-                }}
+                onClick={onStart}
               >
-                Save &amp; Start
+                {onSaveAndStart ? "Start" : "Start workout"}
               </Button>
-            )}
-            <Button
-              variant={onSaveAndStart ? "secondary" : "accent"}
-              size="md"
-              iconLeft="Play"
-              fullWidth
-              onClick={onStart}
-            >
-              {onSaveAndStart ? "Just start" : "Start workout"}
-            </Button>
+            </div>
           </>
         )}
         <div className="result__actions-row">
