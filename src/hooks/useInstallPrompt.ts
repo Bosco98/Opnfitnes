@@ -5,12 +5,24 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
+declare global {
+  interface Window {
+    __pwaInstallPrompt: BeforeInstallPromptEvent | null;
+  }
+}
+
 /** Captures the browser's PWA install prompt and exposes a trigger function. */
 export function useInstallPrompt() {
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const isStandalone = window.matchMedia("(display-mode: standalone)").matches;
 
   useEffect(() => {
+    // Pick up the event if it fired before React mounted
+    if (window.__pwaInstallPrompt) {
+      setPrompt(window.__pwaInstallPrompt);
+      window.__pwaInstallPrompt = null;
+    }
+
     const handler = (e: Event) => {
       e.preventDefault();
       setPrompt(e as BeforeInstallPromptEvent);
@@ -26,13 +38,9 @@ export function useInstallPrompt() {
       const { outcome } = await prompt.userChoice;
       if (outcome === "accepted") setPrompt(null);
     } else {
-      // Fallback: instruct the user to use the browser's native install UI
       alert('To install: open your browser menu and choose "Add to Home Screen" or "Install app".');
     }
   };
 
-  // Hide only when already running as an installed PWA
-  const showInstall = !isStandalone;
-
-  return { showInstall, canInstall: prompt !== null, install };
+  return { showInstall: !isStandalone, canInstall: prompt !== null, install };
 }
