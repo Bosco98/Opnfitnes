@@ -9,7 +9,7 @@ export function SettingsTab() {
 
   return (
     <Screen
-      title="Settings"
+      title="Setting"
       action={
         showInstall ? (
           <button
